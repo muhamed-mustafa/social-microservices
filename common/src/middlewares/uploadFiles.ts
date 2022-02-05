@@ -7,15 +7,15 @@ const upload  = multer({ storage });
 
 const validationPhoto = (req : Request , res : Response , next : NextFunction) =>
 {
-    const files = req.files as { [fieldname : string] : Express.Multer.File[] };
+    const files  = req.files as { [fieldname : string] : Express.Multer.File[] };
+    const fields = ["images" , "profilePicture" , "coverPicture"];
 
-    const images = ['image' , 'profilePicture' , 'coverPicture'];
-    images.forEach(img =>
+    fields.map(field =>
     {
-        if(files[img])
-        {
-            files.img.map(file =>
-            {
+       if(field in files)
+       {
+           files[field].map(file =>
+           {
                 if(!file.originalname.match(/\.(jpg|jpeg|png)/))
                 {
                     throw new BadRequestError(`${file.originalname} should be a valid image.`);
@@ -25,8 +25,8 @@ const validationPhoto = (req : Request , res : Response , next : NextFunction) =
                 {
                     throw new BadRequestError(`${file.size} is Larger`);
                 }
-            });
-        };
+           });
+       }
     });
 
     next();

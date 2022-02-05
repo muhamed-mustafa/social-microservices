@@ -15,7 +15,7 @@ router.get('/api/auth/admin' , requireAuth , async(req : Request , res : Respons
 
       const users = await User.find({});
 
-      if(!users)
+      if(users.length === 0)
       {
           throw new BadRequestError('there is no users...');
       }

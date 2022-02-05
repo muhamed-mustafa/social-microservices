@@ -6,16 +6,17 @@ const router = express.Router();
 
 router.patch('/api/auth/user/follow' , requireAuth , async(req : Request , res : Response , next : NextFunction ) =>
 {
-      let user = await User.findById(req.query.id);
-      if(!user)
-      {
-          throw new BadRequestError('user in not exists');
-      };
+    let user = await User.findById(req.query.id);
+    if(!user)
+    {
+        throw new BadRequestError('user in not exists');
+    };
 
-      user.updateOne({$push : { followers : req.currentUser!.id }});
-      const currentUser = await User.findByIdAndUpdate(req.currentUser!.id , {$push : {following : user}} , {new : true});
-      
-      res.status(200).send({ status : 200 , currentUser , success : true});
+    // todo: waiting to publish data from followings route and listen to show followings posts
+    user.updateOne({$push : { followers : req.currentUser!.id }});
+    const currentUser = await User.findByIdAndUpdate(req.currentUser!.id , {$push : {following : user}} , {new : true});
+    
+    res.status(200).send({ status : 200 , currentUser , success : true});
 }); 
 
 export { router as followUser };

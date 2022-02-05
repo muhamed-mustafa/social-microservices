@@ -159,7 +159,7 @@ const userSchema = new mongoose.Schema({
                 trim : true,
             },
 
-            ends_in :
+            end_in :
             {
                 type : String,
             }

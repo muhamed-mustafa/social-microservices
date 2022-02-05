@@ -8,6 +8,11 @@ router.delete('/api/auth/admin' , requireAuth , async(req : Request , res : Resp
 {
       const user = await User.findById(req.currentUser!.id);
 
+      if(!user)
+      {
+            throw new BadRequestError('user is not found!')
+      }
+
       if(!user?.isAdmin)
       {
             throw new BadRequestError('User have no this permission');
@@ -15,7 +20,7 @@ router.delete('/api/auth/admin' , requireAuth , async(req : Request , res : Resp
 
       await User.findByIdAndRemove(req.query.id);
 
-      res.status(204).send({ status : 204 , message : 'user deleted successfully.' , success : true });
+      res.status(204).send({});
 });
 
 export { router as adminDeleteUsers };

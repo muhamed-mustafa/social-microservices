@@ -1,6 +1,6 @@
 import express , { Request , Response } from 'express';
 import { User } from '../models/user.model';
-import { requireAuth , BadRequestError } from '@social-microservices/common';
+import { requireAuth , BadRequestError , upload } from '@social-microservices/common';
 import moment from 'moment';
 
 interface BanUser
@@ -13,7 +13,7 @@ interface BanUser
 
 const router = express.Router();
 
-router.patch('/api/auth/admin/ban' , requireAuth , async(req : Request , res : Response) =>
+router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : Request , res : Response) =>
 {
       const user = await User.findById(req.currentUser!.id);
 

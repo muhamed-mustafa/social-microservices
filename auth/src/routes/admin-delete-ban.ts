@@ -22,12 +22,10 @@ router.delete('/api/auth/admin/ban' , requireAuth , async(req : Request , res : 
 
       existingUser.ban = existingUser.ban.filter(e => e.id !== req.query.banId);
 
-      if(existingUser.ban.length !== 0)
+      if(existingUser.ban.length === 0)
       {
-          existingUser.hasAccess = false;
+          existingUser.hasAccess = true;
       }
-
-      existingUser.hasAccess = true;
 
       await existingUser.save();
 
