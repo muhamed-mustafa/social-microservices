@@ -24,3 +24,11 @@ spec :
                 name : post-srv
                 port :
                   number : 3000
+          - path : /api/product/?(.*)
+            pathType : Prefix
+            backend :
+              service :
+                name : market-srv
+                port :
+                  number : 3000
+                  

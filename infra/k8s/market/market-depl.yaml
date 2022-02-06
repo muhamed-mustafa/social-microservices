@@ -1,0 +1,49 @@
+apiVersion : apps/v1
+kind : Deployment
+metadata :
+  name : market-depl
+spec :
+  replicas : 1
+  selector :
+    matchLabels :
+      app : market
+  template :
+    metadata : 
+      labels :
+        app : market
+    spec :
+      containers :
+        - name  : market
+          image : muhammedmustafa/market
+          env :
+            - name  : MONGO_URI
+              value : mongodb://market-mongo-srv:27017/market
+            - name  : CLOUDINARY_NAME
+              value : microservices
+            - name  : CLOUDINARY_API_KEY
+              value : "811727343751112"
+            - name  : CLOUDINARY_SECRET_KEY
+              valueFrom :
+                secretKeyRef :
+                  name  : cloudinary-secret
+                  key   : CLOUDINARY_SECRET_KEY
+            - name : JWT_KEY
+              valueFrom :
+                secretKeyRef :
+                  name  : jwt-secret
+                  key : JWT_KEY
+--- 
+
+apiVersion : v1
+kind : Service
+metadata : 
+  name : market-srv
+spec :
+  type : ClusterIP
+  selector :
+    app : market
+  ports :
+    - name : market
+      protocol : TCP
+      port : 3000
+      targetPort : 3000

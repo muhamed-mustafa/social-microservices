@@ -1,21 +1,21 @@
 import express , { Request , Response } from 'express';
 import { validationPhoto , upload, BadRequestError, requireAuth } from '@social-microservices/common';
-import { Post } from '../models/post.model';
+import { Product } from '../models/product.model';
 import { v2 as Cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
 
 const router = express.Router();
 
-router.post('/api/post/create' , upload.fields([{name : "images"}]) , validationPhoto , requireAuth , async(req : Request , res : Response) =>
+router.post('/api/product/create' , upload.fields([{name : "images"}]) , validationPhoto , requireAuth , async(req : Request , res : Response) =>
 {
       const files = req.files as {[fieldname : string] : Express.Multer.File[]};
 
       if(!req.body)
       {
-            throw new BadRequestError("Can't not post Empty Request");
+            throw new BadRequestError("Can't not send Empty Request");
       }
 
-      const newPost = Post.build({ ...req.body , userId : req.currentUser!.id })
+      const newProduct = Product.build({ ...req.body , userId : req.currentUser!.id })
 
       if(files.images)
       {
@@ -25,7 +25,7 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
               { 
                     const imageId = randomBytes(16).toString('hex');
                     return Cloudinary.uploader.upload_stream({
-                        public_id : `post-image/${imageId}-${image.originalname}/social-${newPost.userId}`,
+                        public_id : `product-image/${imageId}-${image.originalname}/social-${newProduct.userId}`,
                         use_filename : true,
                         tags : `${imageId}-tag`,
                         width : 500,
@@ -43,10 +43,10 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
 
                         else
                         {
-                            newPost.images.push({id : imageId , URL : result?.secure_url!});
+                            newProduct.images.push({id : imageId , URL : result?.secure_url!});
                             return setTimeout(() =>
                             {
-                                resolve(newPost.images);
+                                resolve(newProduct.images);
 
                             }, parseInt(`${files.images.length}000`))
                            
@@ -56,8 +56,8 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
           });
       }
 
-      await newPost.save();
-      res.status(201).json({status : 201 , newPost , message : "Post created Successfully!" , success : true});
+      await newProduct.save();
+      res.status(201).json({status : 201 , newProduct , message : "Product created Successfully!" , success : true});
 });
 
-export { router as createPostRouter };
+export { router as createProductRouter };
