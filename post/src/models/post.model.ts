@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 interface PostAttrs 
 {
     userId  : string;
-    images?  : { id : string , URL : string; }[];
+    images? : { id : string , URL : string; }[];
     desc?   : string;
     likes?  : string[];
 };
@@ -11,7 +11,7 @@ interface PostAttrs
 interface PostDoc extends mongoose.Document
 {
     userId : string;
-    images  : { id : string , URL : string; }[];
+    images : { id : string , URL : string; }[];
     desc   : string;
     likes  : string[];
     type   : string;
@@ -56,7 +56,7 @@ const postSchema = new mongoose.Schema({
       default : "Post",
   },
  
-} , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id , delete ret.password } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } , versionKey : false });
+} , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } , versionKey : false });
 
 postSchema.statics.build = (attrs : PostAttrs) =>
 {

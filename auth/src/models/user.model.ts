@@ -16,6 +16,10 @@ interface UserAttrs
     from? : string;
     isAdmin? : boolean;
     macAddress : { Mac : string }[];
+    emailToken : string;
+    active? : boolean;
+    resetPasswordToken? : string;
+    resetPasswordExpires? : string;
 };
 
 interface UserDoc extends mongoose.Document
@@ -38,6 +42,10 @@ interface UserDoc extends mongoose.Document
     hasAccess : boolean;
     createdAt : string;
     updatedAt : string;
+    emailToken : string;
+    active : boolean;
+    resetPasswordToken : string;
+    resetPasswordExpires : string;
 };
 
 interface UserModel extends mongoose.Model<UserDoc>
@@ -164,7 +172,29 @@ const userSchema = new mongoose.Schema({
                 type : String,
             }
         }
-      ]   
+      ],
+      
+    emailToken :
+    {
+        type : String
+    },
+
+    active :
+    {
+        type    : Boolean ,
+        default : false
+    },
+
+    resetPasswordToken :
+    {
+        type : String ,
+    }, 
+
+    resetPasswordExpires : 
+    {
+        type : Date ,
+    },
+
 } , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id , delete ret.password } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 userSchema.set('versionKey' , 'version');

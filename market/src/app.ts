@@ -10,6 +10,8 @@ import { getProductRouter } from './routes/getAllProducts';
 import { getProductById } from './routes/getProduct';
 import { getAllTimelineRouter } from './routes/getTimelineAll';
 import { likeOrDislikeProductRouter } from './routes/likeOrDislikeProduct'; 
+import { searchProduct } from './routes/search';
+import { searchAllProduct } from './routes/search-all';
 
 const app = express();
 app.set('trust proxy', true);
@@ -23,7 +25,9 @@ app.use([
   getProductRouter,
   getProductById,
   getAllTimelineRouter,
-  likeOrDislikeProductRouter
+  likeOrDislikeProductRouter,
+  searchProduct,
+  searchAllProduct
 ]);
 
 // Midlewares

@@ -15,7 +15,7 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
             throw new BadRequestError("Can't not post Empty Request");
       }
 
-      const newPost = Post.build({ ...req.body , userId : req.currentUser!.id })
+      const newPost = Post.build({ desc : req.body.desc , userId : req.currentUser!.id })
 
       if(files.images)
       {
@@ -42,20 +42,20 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
                         }
 
                         else
-                        {
+                        {                            
                             newPost.images.push({id : imageId , URL : result?.secure_url!});
                             return setTimeout(() =>
                             {
                                 resolve(newPost.images);
 
-                            }, parseInt(`${files.images.length}000`))
+                            },10000)
                            
                         }   
                     }).end(image.buffer);
               });
           });
       }
-
+      
       await newPost.save();
       res.status(201).json({status : 201 , newPost , message : "Post created Successfully!" , success : true});
 });

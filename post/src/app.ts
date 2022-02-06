@@ -10,6 +10,8 @@ import { getPostById } from './routes/getPost';
 import { getAllTimelineRouter } from './routes/getTimelineAll';
 import { updatePostRouter } from './routes/updatePost';
 import { likeOrDislikePostRouter } from './routes/likeOrDislikePost';
+import { searchPost } from './routes/search';
+import { searchAllPosts } from './routes/search-all';
 
 const app = express();
 app.set('trust proxy', true);
@@ -24,6 +26,8 @@ app.use([
   getPostById,
   getAllTimelineRouter,
   likeOrDislikePostRouter,
+  searchPost,
+  searchAllPosts
 ]);
 
 // Midlewares
