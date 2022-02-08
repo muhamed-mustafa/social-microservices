@@ -29,7 +29,7 @@ router.patch("/api/auth/reset", upload.none(), async (req: Request, res: Respons
 
          if(req.body.password.length < 8)
          {
-             throw new BadRequestError('assword must be more 8 characters');
+             throw new BadRequestError('password must be more 8 characters');
          }
 
          let isTheSamePassword = await Password.compare(user.password , req.body.password);
@@ -40,6 +40,11 @@ router.patch("/api/auth/reset", upload.none(), async (req: Request, res: Respons
          }
 
          user.password = req.body.password;
+    }
+
+    else
+    {
+        throw new BadRequestError('Password is required!');
     }
 
     await user.save();

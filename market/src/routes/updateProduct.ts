@@ -32,7 +32,7 @@ router.patch('/api/product/update' , upload.fields([{name : "images"}]) , valida
                         width : 500,
                         height : 500,
                         crop : "scale",
-                        placeholer : true,
+                        placeholder : true,
                         resource_type : 'auto'
                     } , async(err , result) =>
                     {
@@ -48,7 +48,7 @@ router.patch('/api/product/update' , upload.fields([{name : "images"}]) , valida
                             return setTimeout(() =>
                             {
                                 resolve(product.images);
-                            } , parseInt(`${files.images.length}000`))
+                            } , parseInt(`${files.images.length}000`) + 5000)
                         }   
                     }).end(image.buffer);
               })

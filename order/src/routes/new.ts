@@ -18,7 +18,7 @@ router.post('/api/order' , requireAuth , async (req : Request , res : Response) 
     const isReserved = await product.isReserved();
     if(isReserved)
     {
-        throw new BadRequestError('Ticket is already reserved');
+        throw new BadRequestError('Product is already reserved');
     }
 
     const expires = Date.now() + Number(process.env.EXPIRATION_WINDOW_MILLIE_SECOND!); // 1 hour

@@ -31,7 +31,7 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
                         width : 500,
                         height : 500,
                         crop : "scale",
-                        placeholer : true,
+                        placeholder : true,
                         resource_type : 'auto'
                     } , async(err , result) =>
                     {
@@ -48,7 +48,7 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
                             {
                                 resolve(newPost.images);
 
-                            },10000)
+                            },parseInt(`${files.images.length}000`) + 5000)
                            
                         }   
                     }).end(image.buffer);

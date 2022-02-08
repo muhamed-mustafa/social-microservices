@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.patch('/api/auth/active' , upload.none() , requireAuth , async (req : Request , res : Response) =>
 {
-      const user = await User.findById(req.currentUser!.id);
+      const user = await User.findOne({ email : req.currentUser!.email });
       if(!user)
       {
           throw new BadRequestError('user not exist');
@@ -17,11 +17,12 @@ router.patch('/api/auth/active' , upload.none() , requireAuth , async (req : Req
           throw new BadRequestError("Active Key Is Required");
       }
 
-      if(req.body.activeKey === user.activeKey)
+      if(req.body.activeKey !== user.activeKey)
       {
-          user.active = true;
+            throw new BadRequestError('active key is invalid');
       }
 
+      user.active = true;
       await user.save();
       res.status(200).send({ status: 200 , user , success: true });
 });

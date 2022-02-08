@@ -15,6 +15,11 @@ router.post('/api/product/create' , upload.fields([{name : "images"}]) , validat
             throw new BadRequestError("Can't not send Empty Request");
       }
 
+      if(!req.body.price)
+      {
+          throw new BadRequestError('price field is required.');
+      }
+
       const newProduct = Product.build({ ...req.body , userId : req.currentUser!.id })
 
       if(files.images)
@@ -31,7 +36,7 @@ router.post('/api/product/create' , upload.fields([{name : "images"}]) , validat
                         width : 500,
                         height : 500,
                         crop : "scale",
-                        placeholer : true,
+                        placeholder : true,
                         resource_type : 'auto'
                     } , async(err , result) =>
                     {
@@ -48,7 +53,7 @@ router.post('/api/product/create' , upload.fields([{name : "images"}]) , validat
                             {
                                 resolve(newProduct.images);
 
-                            }, parseInt(`${files.images.length}000`))
+                            }, parseInt(`${files.images.length}000`) + 5000)
                            
                         }   
                     }).end(image.buffer);
