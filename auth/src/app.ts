@@ -13,6 +13,12 @@ import { adminListOfUsers } from './routes/admin-list-of-users';
 import { adminDeleteUsers } from './routes/admin-delete-users';
 import { adminBanUsers } from './routes/admin-ban-users';
 import { adminDeleteBan } from './routes/admin-delete-ban';
+import { activeRouter } from './routes/active';
+import { forgetPasswordRouter } from './routes/forgetPassword';
+import { resetPasswordRouter } from './routes/reset-password';
+import { resendTokenRouter } from './routes/resend-token';
+import { checkPasswordTokenRouter } from './routes/check-password-token';
+
 import { currentUser, errorHandler, NotFoundError } from '@social-microservices/common';
 import cookieSession from 'cookie-session';
 
@@ -33,7 +39,12 @@ app.use([
   adminListOfUsers,
   adminDeleteUsers,
   adminBanUsers,
-  adminDeleteBan
+  adminDeleteBan,
+  activeRouter,
+  forgetPasswordRouter,
+  resendTokenRouter,
+  resetPasswordRouter,
+  checkPasswordTokenRouter
 ]);
 
 // Midlewares

@@ -32,6 +32,26 @@ spec :
                 secretKeyRef :
                   name  : jwt-secret
                   key : JWT_KEY
+            - name  : MAIL_USER
+              value : "microservice.nodemailer@gmail.com"
+            - name  : MAIL_SERVER_PORT
+              value : "465"
+            - name  : CLIENT_ID
+              value : "1070496040691-lqta83gpoujs4ol1l4nrqnrt1op1k117.apps.googleusercontent.com"
+            - name  : REFRESH_TOKEN
+              value : "1//047xn-7CCVKFsCgYIARAAGAQSNwF-L9IruwHDfs4ca96-xzEVmWpi2qpkb8B-x_wK3AhhAFdAxK9SbhPsvtlwb__kDuhlVLWK1I4"
+            - name  : REDIRECT_URI
+              value : "https://developers.google.com/oauthplayground"
+            - name  : MAIL_PASS
+              valueFrom :
+                secretKeyRef :
+                  name : mail-api-secret-pass-social
+                  key  : MAIL_PASS
+            - name : CLIENT_SECRET
+              valueFrom :
+                secretKeyRef :
+                  name : client-api-secret-social
+                  key  : CLIENT_SECRET
 --- 
 
 apiVersion : v1

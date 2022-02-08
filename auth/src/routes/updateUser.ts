@@ -18,6 +18,22 @@ router.patch('/api/auth/user' , upload.fields([{name : "profilePicture" , maxCou
 
       if(req.body.password)
        { 
+            const specialCharactersValidator = /[ `!@#$%^&*()+\=\[\]{};':"\\|,.<>\/?~]/;
+            if(req.body.password.includes('password') || req.body.password.includes('asdf') || req.body.password.length < 8)
+            {
+                throw new BadRequestError('Password is too week.');
+            }
+
+            if(!specialCharactersValidator.test(req.body.password))
+            {
+                throw new BadRequestError('Password must contain a special character.');
+            }
+
+            if(req.body.password.length < 8)
+            {
+                throw new BadRequestError('assword must be more 8 characters');
+            }
+
             let isTheSamePassword = await Password.compare(user.password , req.body.password);
 
             if (isTheSamePassword) 

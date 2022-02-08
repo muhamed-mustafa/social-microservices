@@ -16,7 +16,7 @@ interface UserAttrs
     from? : string;
     isAdmin? : boolean;
     macAddress : { Mac : string }[];
-    emailToken : string;
+    activeKey : string;
     active? : boolean;
     resetPasswordToken? : string;
     resetPasswordExpires? : string;
@@ -42,7 +42,7 @@ interface UserDoc extends mongoose.Document
     hasAccess : boolean;
     createdAt : string;
     updatedAt : string;
-    emailToken : string;
+    activeKey : string;
     active : boolean;
     resetPasswordToken : string;
     resetPasswordExpires : string;
@@ -174,7 +174,7 @@ const userSchema = new mongoose.Schema({
         }
       ],
       
-    emailToken :
+    activeKey :
     {
         type : String
     },
