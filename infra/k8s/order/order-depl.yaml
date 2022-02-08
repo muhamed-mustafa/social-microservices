@@ -1,0 +1,37 @@
+apiVersion : apps/v1
+kind : Deployment
+metadata :
+  name : order-depl
+spec :
+  replicas : 1
+  selector :
+    matchLabels :
+      app : order
+  template :
+    metadata : 
+      labels :
+        app : order
+    spec :
+      containers :
+        - name  : order
+          image : muhammedmustafa/order
+          env :
+            - name  : MONGO_URI
+              value : mongodb://order-mongo-srv:27017/order
+            - name  : EXPIRATION_WINDOW_MILLIE_SECOND 
+              value : "360000"
+--- 
+
+apiVersion : v1
+kind : Service
+metadata : 
+  name : order-srv
+spec :
+  type : ClusterIP
+  selector :
+    app : order
+  ports :
+    - name : order
+      protocol : TCP
+      port : 3000
+      targetPort : 3000

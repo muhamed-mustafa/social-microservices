@@ -14,3 +14,4 @@ export * from './middlewares/validate-request';
 
 // Types
 export * from './types/gender-type';
+export * from './types/order-status';

@@ -1,25 +1,23 @@
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+import { Order , OrderStatus } from './order';
 
 interface ProductAttrs 
 {
-    userId  : string;
+    id : string;
     images? : { id : string , URL : string; }[];
     desc?   : string;
-    likes?  : string[];
     price   : number;
 };
 
-interface ProductDoc extends mongoose.Document
+export interface ProductDoc extends mongoose.Document
 {
-    userId : string;
+    id : string;
     images : { id : string , URL : string; }[];
     desc   : string;
-    likes  : string[];
     type   : string;
     price  : number;
-    createdAt : string;
-    updatedAt : string;
+    isReserved() : Promise<boolean>;
 };
 
 interface ProductModel extends mongoose.Model<ProductDoc>
@@ -28,12 +26,7 @@ interface ProductModel extends mongoose.Model<ProductDoc>
 }
 
 const productSchema = new mongoose.Schema({
-  userId :
-  {
-      type : String,
-      required : true,
-  },
-
+ 
   images :
   {
       type : Array,
@@ -54,26 +47,41 @@ const productSchema = new mongoose.Schema({
         min : 0,
   },
 
-  likes :
-  {
-      type : Array,
-      default : [],
-  },
-
   type : 
   {
       type : String,
       default : "Product",
   },
  
-} , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id , delete ret.password } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } , versionKey : false });
+} , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id  } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } , versionKey : false });
 
 productSchema.set('versionKey' , 'version');
 productSchema.plugin(updateIfCurrentPlugin);
 
+productSchema.methods.isReserved = async function()
+{
+    const existingOrder = await Order.findOne({
+      product : this,
+      status :
+      {
+          $in :
+          [
+              OrderStatus.Created,
+              OrderStatus.AwaitingPayment,
+              OrderStatus.Complete
+          ],
+      },
+    });
+
+    return !!existingOrder; 
+};
+
 productSchema.statics.build = (attrs : ProductAttrs) =>
 {
-    return new Product(attrs);
+    return new Product({
+        _id : attrs.id,
+        ...attrs
+    });
 }
 
 const Product = mongoose.model<ProductDoc , ProductModel>('Product' , productSchema);
