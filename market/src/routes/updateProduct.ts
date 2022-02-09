@@ -45,10 +45,10 @@ router.patch('/api/product/update' , upload.fields([{name : "images"}]) , valida
                         else
                         {
                             product.images.push({ id : imageId , URL : result?.secure_url!});
-                            return setTimeout(() =>
+                            if(files.images.length === product.images.length)
                             {
-                                resolve(product.images);
-                            } , parseInt(`${files.images.length}000`) + 5000)
+                                return resolve(product.images);
+                            }
                         }   
                     }).end(image.buffer);
               })

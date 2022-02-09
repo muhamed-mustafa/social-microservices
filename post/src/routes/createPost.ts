@@ -44,12 +44,10 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
                         else
                         {                            
                             newPost.images.push({id : imageId , URL : result?.secure_url!});
-                            return setTimeout(() =>
+                            if(files.images.length === newPost.images.length)
                             {
-                                resolve(newPost.images);
-
-                            },parseInt(`${files.images.length}000`) + 5000)
-                           
+                                return resolve(newPost.images);
+                            }
                         }   
                     }).end(image.buffer);
               });

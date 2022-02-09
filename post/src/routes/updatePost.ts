@@ -45,10 +45,10 @@ router.patch('/api/post/update' , upload.fields([{name : "images"}]) , validatio
                         else
                         {
                             post.images.push({ id : imageId , URL : result?.secure_url!});
-                            return setTimeout(() =>
+                            if(files.images.length === post.images.length)
                             {
-                                resolve(post.images);
-                            } , parseInt(`${files.images.length}000`) + 5000)
+                                return resolve(post.images);
+                            }
                         }   
                     }).end(image.buffer);
               })

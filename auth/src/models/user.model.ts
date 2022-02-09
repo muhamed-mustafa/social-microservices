@@ -182,7 +182,7 @@ const userSchema = new mongoose.Schema({
     active :
     {
         type    : Boolean ,
-        default : false
+        default : false 
     },
 
     resetPasswordToken :
@@ -195,7 +195,11 @@ const userSchema = new mongoose.Schema({
         type : Date ,
     },
 
-} , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id , delete ret.password } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } });
+} , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id , delete ret.password;
+     ret.ban = ret.ban.map((data : any) => {
+     const { period , reason , end_in , _id : id } = data;
+     return { period , reason , end_in , id } }) } } ,
+     timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 userSchema.set('versionKey' , 'version');
 userSchema.plugin(updateIfCurrentPlugin);

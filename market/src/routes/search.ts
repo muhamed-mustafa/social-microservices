@@ -24,4 +24,4 @@ router.get('/api/product/search' , requireAuth , async(req : Request , res : Res
     res.status(200).send({ status : 200 , product : productSearch , success : true});
 });
 
-export { router  as searchProduct };
+export { router  as searchProduct }; 

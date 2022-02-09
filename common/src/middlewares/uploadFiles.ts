@@ -23,7 +23,7 @@ const validationPhoto = (req : Request , res : Response , next : NextFunction) =
 
                 if(file.size > 1e6)
                 {
-                    throw new BadRequestError(`${file.size} is Larger`);
+                    throw new BadRequestError(`${file.originalname} is Larger`);
                 }
            });
        }

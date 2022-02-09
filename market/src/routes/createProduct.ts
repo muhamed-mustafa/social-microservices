@@ -49,12 +49,10 @@ router.post('/api/product/create' , upload.fields([{name : "images"}]) , validat
                         else
                         {
                             newProduct.images.push({id : imageId , URL : result?.secure_url!});
-                            return setTimeout(() =>
+                            if(files.images.length === newProduct.images.length)
                             {
-                                resolve(newProduct.images);
-
-                            }, parseInt(`${files.images.length}000`) + 5000)
-                           
+                                return resolve(newProduct.images);
+                            }                           
                         }   
                     }).end(image.buffer);
               });
