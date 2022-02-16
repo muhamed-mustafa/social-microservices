@@ -7,7 +7,7 @@ import { randomBytes } from 'crypto';
 
 const router = express.Router();
 
-router.patch('/api/post/update' , upload.fields([{name : "images"}]) , validationPhoto , requireAuth ,  async(req : Request , res : Response) =>
+router.patch('/api/post' , upload.fields([{name : "images"}]) , validationPhoto , requireAuth ,  async(req : Request , res : Response) =>
 {
       const files = req.files as {[fieldname : string] : Express.Multer.File[]};
 
@@ -26,7 +26,7 @@ router.patch('/api/post/update' , upload.fields([{name : "images"}]) , validatio
               {
                     const imageId = randomBytes(16).toString('hex');
                     return Cloudinary.uploader.upload_stream({
-                        public_id : `post-image-${imageId}-${image.originalname}/social-${post.userId}`,
+                        public_id : `post-image-${imageId}-${image.originalname}/social-${post.author}`,
                         use_filename : true,
                         tags : `${imageId}-tag`,
                         width : 500,

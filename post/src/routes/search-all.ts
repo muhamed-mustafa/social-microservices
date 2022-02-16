@@ -14,7 +14,7 @@ router.get('/api/post/search-all' , requireAuth , async(req : Request , res : Re
 
     const posts = await Post.find({});
 
-    const postSearch = posts.filter(post => post.desc.toLowerCase().includes(search.toString().toLowerCase()));
+    const postSearch = posts.filter(post => post.content.toLowerCase().includes(search.toString().toLowerCase()));
 
     if(posts.length === 0 || postSearch.length === 0)
     {

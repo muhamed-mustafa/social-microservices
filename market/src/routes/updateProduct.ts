@@ -4,6 +4,8 @@ import { v2 as Cloudinary } from 'cloudinary';
 import _ from 'lodash';
 import { randomBytes } from 'crypto';
 import { Product } from '../models/product.model';
+import { natsWrapper } from '../nats-wrapper';
+import { ProductUpdatedPublisher } from '../events/publishers/product-updated-publisher';
 
 const router = express.Router();
 
@@ -26,7 +28,7 @@ router.patch('/api/product/update' , upload.fields([{name : "images"}]) , valida
               {
                     const imageId = randomBytes(16).toString('hex');
                     return Cloudinary.uploader.upload_stream({
-                        public_id : `product-image-${imageId}-${image.originalname}/social-${product.userId}`,
+                        public_id : `product-image-${imageId}-${image.originalname}/social-${product.merchantId}`,
                         use_filename : true,
                         tags : `${imageId}-tag`,
                         width : 500,
@@ -62,6 +64,15 @@ router.patch('/api/product/update' , upload.fields([{name : "images"}]) , valida
 
       _.extend(product , req.body);
       await product.save();
+      await new ProductUpdatedPublisher(natsWrapper.client).publish({
+            id : product.id,
+            images : product.images,
+            price : product.price,
+            version : product.version,
+            merchantId : product.merchantId,
+            content : product.content 
+      });
+
       res.status(200).json({status : 200 , product , message : "Product Updated Successfully!" , success : true});
 });
 

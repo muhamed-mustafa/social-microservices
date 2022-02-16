@@ -17,7 +17,7 @@ app.use([
   indexOrderRouter,
   showOrderRouter,
   createOrderRouter,
-  updateOrderRouter
+  updateOrderRouter,
 ]);
 
 // Midlewares

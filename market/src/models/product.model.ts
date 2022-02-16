@@ -3,23 +3,25 @@ import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 interface ProductAttrs 
 {
-    userId  : string;
+    merchantId  : string;
     images? : { id : string , URL : string; }[];
-    desc?   : string;
+    content?   : string;
     likes?  : string[];
     price   : number;
 };
 
 interface ProductDoc extends mongoose.Document
 {
-    userId : string;
+    merchantId : string;
     images : { id : string , URL : string; }[];
-    desc   : string;
+    content   : string;
     likes  : string[];
     type   : string;
     price  : number;
+    version : number;
     createdAt : string;
     updatedAt : string;
+    orderId?  : string;
 };
 
 interface ProductModel extends mongoose.Model<ProductDoc>
@@ -28,7 +30,7 @@ interface ProductModel extends mongoose.Model<ProductDoc>
 }
 
 const productSchema = new mongoose.Schema({
-  userId :
+  merchantId :
   {
       type : String,
       required : true,
@@ -40,7 +42,7 @@ const productSchema = new mongoose.Schema({
       default : [],
   },
 
-  desc :
+  content :
   {
       type : String,
       trim : true,
@@ -65,6 +67,11 @@ const productSchema = new mongoose.Schema({
       type : String,
       default : "Product",
   },
+
+  orderId :
+  {
+      type : String,
+  }
  
 } , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id , delete ret.password } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } , versionKey : false });
 

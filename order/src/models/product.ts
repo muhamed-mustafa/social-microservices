@@ -6,7 +6,7 @@ interface ProductAttrs
 {
     id : string;
     images? : { id : string , URL : string; }[];
-    desc?   : string;
+    content?   : string;
     price   : number;
 };
 
@@ -14,15 +14,17 @@ export interface ProductDoc extends mongoose.Document
 {
     id : string;
     images : { id : string , URL : string; }[];
-    desc   : string;
+    content   : string;
     type   : string;
     price  : number;
+    version : number;
     isReserved() : Promise<boolean>;
 };
 
 interface ProductModel extends mongoose.Model<ProductDoc>
 {
     build(attrs : ProductAttrs) : ProductDoc;
+    findByEvent(event : { id : string , version : number}) : Promise<ProductDoc | null>;
 }
 
 const productSchema = new mongoose.Schema({
@@ -33,7 +35,7 @@ const productSchema = new mongoose.Schema({
       default : [],
   },
 
-  desc :
+  content :
   {
       type : String,
       trim : true,
@@ -74,6 +76,11 @@ productSchema.methods.isReserved = async function()
     });
 
     return !!existingOrder; 
+};
+
+productSchema.statics.findByEvent = (event : { id : string , version : number}) =>
+{
+    return Product.findOne({ id : event.id , version : event.version - 1});
 };
 
 productSchema.statics.build = (attrs : ProductAttrs) =>

@@ -6,7 +6,7 @@ import { randomBytes } from 'crypto';
 
 const router = express.Router();
 
-router.post('/api/post/create' , upload.fields([{name : "images"}]) , validationPhoto , requireAuth , async(req : Request , res : Response) =>
+router.post('/api/post' , upload.fields([{name : "images"}]) , validationPhoto , requireAuth , async(req : Request , res : Response) =>
 {
       const files = req.files as {[fieldname : string] : Express.Multer.File[]};
 
@@ -15,7 +15,7 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
             throw new BadRequestError("Can't not post Empty Request");
       }
 
-      const newPost = Post.build({ desc : req.body.desc , userId : req.currentUser!.id })
+      const newPost = Post.build({ content : req.body.content , author : req.currentUser!.id })
 
       if(files.images)
       {
@@ -25,7 +25,7 @@ router.post('/api/post/create' , upload.fields([{name : "images"}]) , validation
               { 
                     const imageId = randomBytes(16).toString('hex');
                     return Cloudinary.uploader.upload_stream({
-                        public_id : `post-image/${imageId}-${image.originalname}/social-${newPost.userId}`,
+                        public_id : `post-image/${imageId}-${image.originalname}/social-${newPost.author}`,
                         use_filename : true,
                         tags : `${imageId}-tag`,
                         width : 500,

@@ -2,6 +2,8 @@ import express , { Request , Response } from 'express';
 import { requireAuth , BadRequestError , NotFoundError } from '@social-microservices/common';
 import { Product } from '../models/product';
 import { Order , OrderStatus } from '../models/order';
+import { natsWrapper } from '../nats-wrapper';
+import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
 
 const router = express.Router();
 
@@ -26,12 +28,26 @@ router.post('/api/order' , requireAuth , async (req : Request , res : Response) 
     // Build the order and save it to the database
     const order = Order.build({
         product,
-        userId : req.currentUser!.id,
+        buyerId : req.currentUser!.id,
         status : OrderStatus.Complete,
         expiresAt : new Date(expires).toISOString()
     });
     
     await order.save();
+
+    // Publish an event saying that an order was created
+    new OrderCreatedPublisher(natsWrapper.client).publish({
+        id : order.id,
+        status : order.status,
+        buyerId : order.buyerId,
+        version : order.version,
+        expiresAt : order.expiresAt,
+        product :
+        {
+            id : product.id,
+            price : product.price
+        }
+    });
 
     res.status(201).send(order);
 });

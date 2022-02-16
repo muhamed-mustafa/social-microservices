@@ -1,7 +1,7 @@
 import express , { Request , Response } from 'express';
 import jwt from 'jsonwebtoken';
 import address from 'address';
-import { upload , validationPhoto , BadRequestError  , validateUserSignUpData } from '@social-microservices/common';
+import { upload , validationPhoto , BadRequestError  , validateUserSignUpData , GenderType , ProfilePictureType } from '@social-microservices/common';
 import { v2 as Cloudinary } from 'cloudinary';
 import { User } from '../models/user.model';
 import { OAuth2Client } from 'google-auth-library';
@@ -59,6 +59,19 @@ validationPhoto  , validateUserSignUpData , async (req : Request , res : Respons
                     }   
                 }).end(files.profilePicture[0].buffer);
             });
+        }
+
+        else
+        {
+                if (user.gender === GenderType.Male) 
+                {
+                    user.profilePicture = ProfilePictureType.Male;
+                } 
+                
+                else 
+                {
+                    user.profilePicture = ProfilePictureType.Female;
+                }
         }
 
         if(files.coverPicture)

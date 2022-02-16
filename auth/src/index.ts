@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { v2 as Cloudinary } from 'cloudinary';
 import { app } from './app';
+import { ExpirationBanListener } from './events/listeners/expiration-ban-listener';
+import { natsWrapper } from './nats-wrapper';
 
 const start = async () =>
 {
@@ -15,6 +17,18 @@ const start = async () =>
 
    try
    {
+        await natsWrapper.connect(process.env.NATS_CLUSTER_ID! , process.env.NATS_CLIENT_ID! , process.env.NATS_URL!);
+        natsWrapper.client.on('close' , () =>
+        {
+            console.log('Nats Connection Closed!');
+            process.exit();
+        }); 
+
+        process.on('SIGINT' , () => natsWrapper.client.close());
+        process.on('SIGTERM' , () => natsWrapper.client.close());
+
+        new ExpirationBanListener(natsWrapper.client).listen();
+        
         await mongoose.connect(process.env.MONGO_URI! , { useNewUrlParser : true , useUnifiedTopology : true } as mongoose.ConnectOptions);
         mongoose.Promise = global.Promise;
         console.log('Connection to Mongodb Successfully!');

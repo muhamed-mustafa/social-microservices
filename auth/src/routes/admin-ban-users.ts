@@ -2,6 +2,9 @@ import express , { Request , Response } from 'express';
 import { User } from '../models/user.model';
 import { requireAuth , BadRequestError , upload } from '@social-microservices/common';
 import moment from 'moment';
+import mongoose from 'mongoose';
+import { BanCreatedPublisher } from '../events/publishers/ban-created-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 interface BanUser
 {
@@ -20,6 +23,11 @@ router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : R
       if(!user?.isAdmin)
       {
             throw new BadRequestError('User have no this permission');
+      }
+
+      if (!req.query.id || !mongoose.Types.ObjectId.isValid(String(req.query.id))) 
+      {
+            throw new BadRequestError("Id Is Invalid");
       }
 
       const existingUser = await User.findById(req.query.id);
@@ -59,6 +67,19 @@ router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : R
       existingUser.ban.push(ban);
 
       await existingUser.save();
+
+      const { id , end_in } = existingUser.ban[existingUser.ban.length - 1];
+
+      if(end_in)
+      {
+            await new BanCreatedPublisher(natsWrapper.client).publish({
+                  id : existingUser.id,
+                  ban :
+                  {
+                        id , end_in
+                  }
+            });
+      }
 
       res.status(200).send({ status : 200 , existingUser , success : true});
 });

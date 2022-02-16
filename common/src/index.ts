@@ -15,3 +15,19 @@ export * from './middlewares/validate-request';
 // Types
 export * from './types/gender-type';
 export * from './types/order-status';
+export * from './types/cover-picture';
+export * from './types/roles-type';
+export * from './types/profile-picture';
+
+// Events
+export * from './events/base-publisher';
+export * from './events/base-listener';
+export * from './events/product-created-event';
+export * from './events/product-updated-event';
+export * from './events/order-created-event';
+export * from './events/order-cancelled-event';
+export * from './events/payment-created-event';
+export * from './events/expiration-ban-event';
+export * from './events/expiration-completed-event';
+export * from './events/subjects';
+

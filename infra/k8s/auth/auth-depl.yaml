@@ -16,6 +16,14 @@ spec :
         - name  : auth
           image : muhammedmustafa/auth
           env :
+            - name : NATS_CLIENT_ID
+              valueFrom :
+                fieldRef :
+                  fieldPath : metadata.name
+            - name  : NATS_URL
+              value : 'http://nats-srv:4222'
+            - name  : NATS_CLUSTER_ID
+              value : social
             - name  : MONGO_URI
               value : mongodb://auth-mongo-srv:27017/auth
             - name  : CLOUDINARY_NAME
@@ -39,7 +47,7 @@ spec :
             - name  : CLIENT_ID
               value : "1070496040691-lqta83gpoujs4ol1l4nrqnrt1op1k117.apps.googleusercontent.com"
             - name  : REFRESH_TOKEN
-              value : "1//047xn-7CCVKFsCgYIARAAGAQSNwF-L9IruwHDfs4ca96-xzEVmWpi2qpkb8B-x_wK3AhhAFdAxK9SbhPsvtlwb__kDuhlVLWK1I4"
+              value : "1//04B8UjdKsDpwyCgYIARAAGAQSNwF-L9Iro5H0MJTASEUCaLumRAgNun6NJsqOCz0uiYbCznVBHEjhWRjHsb36LHgXD1ARbgBTYpo"
             - name  : REDIRECT_URI
               value : "https://developers.google.com/oauthplayground"
             - name  : MAIL_PASS

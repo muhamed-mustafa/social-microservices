@@ -3,6 +3,8 @@ import { validationPhoto , upload, BadRequestError, requireAuth } from '@social-
 import { Product } from '../models/product.model';
 import { v2 as Cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
+import { natsWrapper } from '../nats-wrapper';
+import { ProductCreatedPublisher } from '../events/publishers/product-created-publisher';
 
 const router = express.Router();
 
@@ -20,7 +22,7 @@ router.post('/api/product/create' , upload.fields([{name : "images"}]) , validat
           throw new BadRequestError('price field is required.');
       }
 
-      const newProduct = Product.build({ ...req.body , userId : req.currentUser!.id })
+      const newProduct = Product.build({ ...req.body , merchantId : req.currentUser!.id })
 
       if(files.images)
       {
@@ -30,7 +32,7 @@ router.post('/api/product/create' , upload.fields([{name : "images"}]) , validat
               { 
                     const imageId = randomBytes(16).toString('hex');
                     return Cloudinary.uploader.upload_stream({
-                        public_id : `product-image/${imageId}-${image.originalname}/social-${newProduct.userId}`,
+                        public_id : `product-image/${imageId}-${image.originalname}/social-${newProduct.merchantId}`,
                         use_filename : true,
                         tags : `${imageId}-tag`,
                         width : 500,
@@ -60,6 +62,15 @@ router.post('/api/product/create' , upload.fields([{name : "images"}]) , validat
       }
 
       await newProduct.save();
+      await new ProductCreatedPublisher(natsWrapper.client).publish({
+            id : newProduct.id,
+            images : newProduct.images,
+            price : newProduct.price,
+            version : newProduct.version,
+            merchantId : newProduct.merchantId,
+            content : newProduct.content 
+      });
+
       res.status(201).json({status : 201 , newProduct , message : "Product created Successfully!" , success : true});
 });
 

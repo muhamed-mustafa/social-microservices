@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/api/posts' , upload.none() , requireAuth , async(req : Request , res : Response) =>
 {   
-    const post = await Post.find({userId : req.currentUser!.id});
+    const post = await Post.find({author : req.currentUser!.id});
 
     if(post.length === 0)
     {

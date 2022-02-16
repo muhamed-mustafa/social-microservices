@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/api/products' , upload.none() , requireAuth , async(req : Request , res : Response) =>
 {   
-    const product = await Product.find({userId : req.currentUser!.id});
+    const product = await Product.find({merchantId : req.currentUser!.id});
 
     if(product.length === 0)
     {

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/api/product/search' , requireAuth , async(req : Request , res : Response) =>
 {
-    const { search } = req.query;
+    const { search , price } = req.query;
     if(!search)
     {
         throw new BadRequestError('search query is required.');
@@ -14,7 +14,8 @@ router.get('/api/product/search' , requireAuth , async(req : Request , res : Res
 
     const products = await Product.find({});
 
-    const productSearch = products.filter(product => product.desc.toLowerCase().includes(search.toString().toLowerCase()));
+    const productSearch = products.filter((product => product.content.toLowerCase().includes(search.toString().toLowerCase()) && product.price === Number(price))
+    || (product => product.content.toLowerCase().includes(search.toString().toLowerCase()) || product.price === Number(price)));
 
     if(products.length === 0 || productSearch.length === 0)
     {

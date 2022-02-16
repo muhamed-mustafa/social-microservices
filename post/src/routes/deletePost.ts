@@ -4,7 +4,7 @@ import { Post } from '../models/post.model';
 
 const router = express.Router();
 
-router.delete('/api/post/delete' , upload.none() , requireAuth , async(req : Request , res : Response) =>
+router.delete('/api/post' , upload.none() , requireAuth , async(req : Request , res : Response) =>
 {
       const post = await Post.findById(req.query.id);
       if(!post)
@@ -12,7 +12,7 @@ router.delete('/api/post/delete' , upload.none() , requireAuth , async(req : Req
           throw new BadRequestError('post is not found!');
       }
 
-      if(post.userId !== req.currentUser!.id)
+      if(post.author !== req.currentUser!.id)
       {
           throw new BadRequestError('you can delete only your posts!');
       }

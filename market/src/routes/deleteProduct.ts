@@ -12,7 +12,7 @@ router.delete('/api/product/delete' , upload.none() , requireAuth , async(req : 
           throw new BadRequestError('product is not found!');
       }
 
-      if(product.userId !== req.currentUser!.id)
+      if(product.merchantId !== req.currentUser!.id)
       {
           throw new BadRequestError('you can delete only your products!');
       }

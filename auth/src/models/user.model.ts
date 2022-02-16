@@ -1,7 +1,7 @@
 import { Password } from "../services/Password";
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
-import { GenderType } from '@social-microservices/common';
+import { GenderType , CoverPicture , RolesType } from '@social-microservices/common';
 
 interface UserAttrs 
 {
@@ -98,10 +98,10 @@ const userSchema = new mongoose.Schema({
           default : "",
       },
 
-      coverPicture :
+      coverPicture : 
       {
-          type : String,
-          default : "",
+        type: String,
+        default: CoverPicture.Default
       },
 
       followers :
@@ -134,12 +134,14 @@ const userSchema = new mongoose.Schema({
           max  : 50, 
       },
 
-      isAdmin :
+      roles :
       {
-          type : Boolean,
-          default : false
+        type: String,
+        required: true,
+        enum: Object.values(RolesType),
+        default: RolesType.User
       },
-
+      
       macAddress :
       {
           type : Array
