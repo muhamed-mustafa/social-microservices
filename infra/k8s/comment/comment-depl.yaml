@@ -1,0 +1,57 @@
+apiVersion : apps/v1
+kind : Deployment
+metadata :
+  name : comment-depl
+spec :
+  replicas : 1
+  selector :
+    matchLabels :
+      app : comment
+  template :
+    metadata : 
+      labels :
+        app : comment
+    spec :
+      containers :
+        - name  : comment
+          image : muhammedmustafa/comment
+          env :
+            - name : NATS_CLIENT_ID
+              valueFrom :
+                fieldRef :
+                  fieldPath : metadata.name
+            - name  : NATS_URL
+              value : 'http://nats-srv:4222'
+            - name  : NATS_CLUSTER_ID
+              value : social
+            - name  : MONGO_URI
+              value : mongodb://comment-mongo-srv:27017/comment
+            - name  : CLOUDINARY_NAME
+              value : microservices
+            - name  : CLOUDINARY_API_KEY
+              value : "811727343751112"
+            - name  : CLOUDINARY_SECRET_KEY
+              valueFrom :
+                secretKeyRef :
+                  name  : cloudinary-secret
+                  key   : CLOUDINARY_SECRET_KEY
+            - name : JWT_KEY
+              valueFrom :
+                secretKeyRef :
+                  name  : jwt-secret
+                  key : JWT_KEY
+--- 
+
+apiVersion : v1
+kind : Service
+metadata : 
+  name : comment-srv
+spec :
+  type : ClusterIP
+  selector :
+    app : comment
+  ports :
+    - name : comment
+      protocol : TCP
+      port : 3000
+      targetPort : 3000

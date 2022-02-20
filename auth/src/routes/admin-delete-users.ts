@@ -14,7 +14,7 @@ router.delete('/api/auth/admin' , requireAuth , async(req : Request , res : Resp
             throw new BadRequestError('user is not found!')
       }
 
-      if(!user?.isAdmin)
+      if(user?.roles !== 'admin')
       {
             throw new BadRequestError('User have no this permission');
       };

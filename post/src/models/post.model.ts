@@ -66,3 +66,5 @@ postSchema.statics.build = (attrs : PostAttrs) =>
 const Post = mongoose.model<PostDoc , PostModel>('Post' , postSchema);
 
 export { Post };
+
+

@@ -7,9 +7,9 @@ export interface ProductUpdatedEvent
     {
         id : string;
         merchantId : string;
-        images : { id : string , URL : string; }[];
-        content   : string;
-        price  : number;
+        images? : { id : string , URL : string; }[];
+        content?   : string;
+        price?  : number;
         version : number;
         orderId? : string;
     };

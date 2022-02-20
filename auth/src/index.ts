@@ -6,7 +6,7 @@ import { natsWrapper } from './nats-wrapper';
 
 const start = async () =>
 {
-   const Environment = ['MONGO_URI' ,  "JWT_KEY" , "CLOUDINARY_NAME" , "CLOUDINARY_API_KEY" , "CLOUDINARY_SECRET_KEY"];
+   const Environment = ['MONGO_URI' ,  "JWT_KEY" , "CLOUDINARY_NAME" , "CLOUDINARY_API_KEY" , "CLOUDINARY_SECRET_KEY" , 'NATS_CLUSTER_ID' , 'NATS_URL' , 'NATS_CLIENT_ID'];
    Environment.forEach(el =>
    {
       if(!process.env[el])

@@ -1,15 +1,11 @@
 import { Subjects } from "./subjects";
 
-export interface BanCreatedEvent
+export interface ExpirationBanEvent
 {
     subject : Subjects.ExpirationBan;
     data :
     {
-        id : string;
-        ban :
-        {
-            id : string;
-            end_in? : string;
-        }
+        userId : string;
+        banId  : string;
     };
 };

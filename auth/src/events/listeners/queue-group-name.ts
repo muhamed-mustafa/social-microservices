@@ -1,1 +1,1 @@
-export const queueGroupName = 'auth:service';
+export const queueGroupName = 'auth-service';

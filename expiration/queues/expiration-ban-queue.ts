@@ -19,12 +19,8 @@ const expirationQueue = new Queue<payload>('ban-expiration' ,
 expirationQueue.process(async (job) =>
 {
     new ExpirationBanPublisher(natsWrapper.client).publish({
-      id : job.data.userId,
-      ban :
-      {
-          id : job.data.banId
-      }
-
+        userId : job.data.userId,
+        banId  : job.data.banId
     });
 });
 

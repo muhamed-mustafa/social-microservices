@@ -20,17 +20,25 @@ router.post('/api/auth/signin' , upload.none() , async(req : Request , res : Res
 
       if(!existingUser.hasAccess)
       {
+            existingUser.ban = existingUser.ban.filter(arr => new Date(arr.end_in) > new Date());
+            if(existingUser.ban.length === 0)
+            {
+                existingUser.hasAccess = true;
+            }
+            
+            await existingUser.save();
+
             await Promise.all(
-                existingUser.ban.map(userban =>
+                existingUser.ban.map(userBan =>
                 {
-                    if(userban.end_in && (new Date(userban.end_in) === new Date() || new Date(userban.end_in) > new Date()))
+                    if(userBan.end_in && (new Date(userBan.end_in) === new Date() || new Date(userBan.end_in) > new Date()))
                     {
-                        throw new BadRequestError(`${existingUser.email} is ban and reason ${userban.reason} to ${moment(userban.end_in).format('DD/MM/YYYY')} time left in ${moment(userban.end_in , 'YYYY.MM.DD').fromNow()}`);
+                        throw new BadRequestError(`${existingUser.email} is banned and the reason is that the ${userBan.reason} until ${moment(userBan.end_in).format('DD/MM/YYYY')} the ban is removed ${moment(userBan.end_in).fromNow()}`);
                     }
 
-                    if(!userban.end_in)
+                    if(!userBan.end_in)
                     {
-                        throw new BadRequestError(`${existingUser.email} is ban forever and reason ${userban.reason}`);
+                        throw new BadRequestError(`${existingUser.email} is ban forever and reason ${userBan.reason}`);
                     }
                 })
             );

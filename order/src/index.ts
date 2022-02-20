@@ -31,6 +31,7 @@ const start = async () =>
 
         new ProductCreatedListener(natsWrapper.client).listen();
         new ProductUpdatedListener(natsWrapper.client).listen();
+        
         new PaymentCreatedListener(natsWrapper.client).listen();
         new ExpirationCompleteListener(natsWrapper.client).listen();
         

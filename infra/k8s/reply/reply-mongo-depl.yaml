@@ -1,0 +1,31 @@
+apiVersion : apps/v1
+kind : Deployment
+metadata :
+  name : reply-mongo-depl
+spec :
+  replicas : 1
+  selector :
+    matchLabels :
+      app : reply-mongo
+  template :
+    metadata : 
+      labels :
+        app : reply-mongo
+    spec :
+      containers :
+        - name  : reply-mongo
+          image : mongo
+--- 
+apiVersion : v1
+kind : Service
+metadata : 
+  name : reply-mongo-srv
+spec :
+  type : ClusterIP
+  selector :
+    app : reply-mongo
+  ports :
+    - name : db
+      protocol : TCP
+      port : 27017
+      targetPort : 27017

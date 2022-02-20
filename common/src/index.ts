@@ -30,4 +30,10 @@ export * from './events/payment-created-event';
 export * from './events/expiration-ban-event';
 export * from './events/expiration-completed-event';
 export * from './events/subjects';
+export * from './events/admin-created-ban-event';
+export * from './events/user-created-event';
+export * from './events/user-updated-event';
+export * from './events/user-deleted-event';
+export * from './events/follow-created-event';
+export * from './events/unfollow-created-event';
 

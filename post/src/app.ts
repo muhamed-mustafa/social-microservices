@@ -27,10 +27,10 @@ app.use([
   getAllTimelineRouter,
   likeOrDislikePostRouter,
   searchPost,
-  searchAllPosts
+  searchAllPosts,
 ]);
 
-// Midlewares
+// Middlewares
 app.use(
   '*',
   async () => {

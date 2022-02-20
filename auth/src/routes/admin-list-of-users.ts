@@ -8,7 +8,7 @@ router.get('/api/auth/admin' , requireAuth , async(req : Request , res : Respons
 {
       const user = await User.findById(req.currentUser!.id);
 
-      if(!user?.isAdmin)
+      if(user?.roles !== 'admin')
       {
             throw new BadRequestError('User have no this permission');
       };
@@ -20,7 +20,7 @@ router.get('/api/auth/admin' , requireAuth , async(req : Request , res : Respons
           throw new BadRequestError('there is no users...');
       }
       
-      const filterUsers = users.filter(e => { return !e.isAdmin });
+      const filterUsers = users.filter(e => { return e.roles !== 'admin' });
 
       res.status(200).send({ status : 200 , filterUsers , success : true });
 });

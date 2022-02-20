@@ -4,6 +4,9 @@ import { v2 as Cloudinary } from 'cloudinary';
 import { User } from '../models/user.model';
 import _ from 'lodash';
 import { Password } from '../services/Password';
+import jwt from 'jsonwebtoken';
+import { UserUpdatedPublisher } from '../events/publishers/user-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -31,7 +34,7 @@ router.patch('/api/auth/user' , upload.fields([{name : "profilePicture" , maxCou
 
             if(req.body.password.length < 8)
             {
-                throw new BadRequestError('assword must be more 8 characters');
+                throw new BadRequestError('password must be more 8 characters');
             }
 
             let isTheSamePassword = await Password.compare(user.password , req.body.password);
@@ -42,6 +45,22 @@ router.patch('/api/auth/user' , upload.fields([{name : "profilePicture" , maxCou
             }
 
             user.password = req.body.password;
+       }
+
+       if(req.body.email)
+       {
+            const existingEmail = await User.findOne({ email : req.body.email });
+
+            if(existingEmail)
+            {
+                throw new BadRequestError('Email is exists, choose another email');
+            }
+
+            user.email = req.body.email;
+
+            req.session = null;
+            const userJwt = jwt.sign({ id : user.id , email : user.email } , process.env.JWT_KEY!);
+            req.session = { jwt : userJwt };
        }
 
       const files = req.files as {[fieldname : string] : Express.Multer.File[]};
@@ -57,7 +76,7 @@ router.patch('/api/auth/user' , upload.fields([{name : "profilePicture" , maxCou
                   width : 500,
                   height : 500,
                   crop : "scale",
-                  placeholer : true,
+                  placeholder : true,
                   resource_type : 'auto'
               } , async(err , result) =>
               {
@@ -87,7 +106,7 @@ router.patch('/api/auth/user' , upload.fields([{name : "profilePicture" , maxCou
                   width : 500,
                   height : 500,
                   crop : "scale",
-                  placeholer : true,
+                  placeholder : true,
                   resource_type : 'auto'
               } , async(err , result) =>
               {
@@ -107,7 +126,30 @@ router.patch('/api/auth/user' , upload.fields([{name : "profilePicture" , maxCou
       }
 
       _.extend(user , req.body);
-      await user.save();
+      const savedData = await user.save();
+      if(savedData)
+      {
+            const bodyData : { [key : string] : string; } = {}
+
+            _.each(req.body , (value , key : string) =>
+            {
+                const fields = ["email" , "username" , "profilePicture" , "coverPicture"];
+                fields.forEach(el =>
+                {
+                    if(key === el)
+                    {
+                        bodyData[key] = value;
+                    }
+                });
+            });
+
+            await new UserUpdatedPublisher(natsWrapper.client).publish({
+                id : savedData.id,
+                ...bodyData,
+                version : savedData.version
+            });
+      };
+
       res.status(200).send({ status : 200 , user , success : true });
 });
 

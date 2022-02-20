@@ -1,10 +1,16 @@
 import mongoose from 'mongoose';
 import { v2 as Cloudinary } from 'cloudinary';
 import { app } from './app';
+import { natsWrapper } from './nats-wrapper';
+import { UserCreatedListener } from './events/listeners/user-created-listener';
+import { UserUpdatedListener } from './events/listeners/user-updated-listener';
+import { UserDeletedListener } from './events/listeners/user-deleted-listener';
+import { FollowCreatedListener } from './events/listeners/follow-created-listener';
+import { UnFollowCreatedListener } from './events/listeners/unfollow-created-listener';
 
 const start = async () =>
 {
-   const Environment = ['MONGO_URI' ,  "JWT_KEY" , "CLOUDINARY_NAME" , "CLOUDINARY_API_KEY" , "CLOUDINARY_SECRET_KEY"];
+   const Environment = ['MONGO_URI' ,  "JWT_KEY" , "CLOUDINARY_NAME" , "CLOUDINARY_API_KEY" , "CLOUDINARY_SECRET_KEY" , 'NATS_URL' , 'NATS_CLIENT_ID' , 'NATS_CLUSTER_ID'];
    Environment.forEach(el =>
    {
       if(!process.env[el])
@@ -15,6 +21,22 @@ const start = async () =>
 
    try
    {
+        await natsWrapper.connect(process.env.NATS_CLUSTER_ID! , process.env.NATS_CLIENT_ID! , process.env.NATS_URL!);
+        natsWrapper.client.on('close' , () =>
+        {
+            console.log('Nats Connection Closed!');
+            process.exit();
+        });
+
+        process.on('SIGINT' , () => natsWrapper.client.close());
+        process.on('SIGTERM' , () => natsWrapper.client.close());
+
+        new UserCreatedListener(natsWrapper.client).listen();
+        new UserUpdatedListener(natsWrapper.client).listen();
+        new UserDeletedListener(natsWrapper.client).listen();
+        new FollowCreatedListener(natsWrapper.client).listen();
+        new UnFollowCreatedListener(natsWrapper.client).listen();
+
         await mongoose.connect(process.env.MONGO_URI! , { useNewUrlParser : true , useUnifiedTopology : true } as mongoose.ConnectOptions);
         mongoose.Promise = global.Promise;
         console.log('Connection to Mongodb Successfully!');

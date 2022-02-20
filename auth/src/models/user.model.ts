@@ -14,14 +14,14 @@ interface UserAttrs
     city? : string;
     description? : string;
     from? : string;
-    isAdmin? : boolean;
+    roles? : RolesType;
     macAddress : { Mac : string }[];
     activeKey : string;
     active? : boolean;
     resetPasswordToken? : string;
     resetPasswordExpires? : string;
 };
-
+ 
 interface UserDoc extends mongoose.Document
 {
     email : string;
@@ -35,7 +35,7 @@ interface UserDoc extends mongoose.Document
     from : string;
     followers : [],
     following : [],
-    isAdmin : boolean;
+    roles : RolesType;
     version : number;
     macAddress : { Mac : string }[];
     ban : { id : string; period : string; reason : string; end_in : string }[];

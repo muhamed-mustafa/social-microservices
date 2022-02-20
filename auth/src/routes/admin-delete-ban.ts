@@ -9,7 +9,7 @@ router.delete('/api/auth/admin/ban' , requireAuth , async(req : Request , res : 
 {
       const user = await User.findById(req.currentUser!.id);
 
-      if(!user?.isAdmin)
+      if(user?.roles !== 'admin')
       {
           throw new BadRequestError('User have no this permission');
       }

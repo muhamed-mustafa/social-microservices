@@ -7,6 +7,8 @@ import { User } from '../models/user.model';
 import { OAuth2Client } from 'google-auth-library';
 import nodemailer , { TransportOptions } from 'nodemailer';
 import { randomBytes } from 'crypto';
+import { UserCreatedPublisher } from '../events/publishers/user-created-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -42,7 +44,7 @@ validationPhoto  , validateUserSignUpData , async (req : Request , res : Respons
                     width : 500,
                     height : 500,
                     crop : "scale",
-                    placeholer : true,
+                    placeholder : true,
                     resource_type : 'auto'
                 } , async(err , result) =>
                 {
@@ -85,7 +87,7 @@ validationPhoto  , validateUserSignUpData , async (req : Request , res : Respons
                     width : 500,
                     height : 500,
                     crop : "scale",
-                    placeholer : true,
+                    placeholder : true,
                     resource_type : 'auto'
                 } , async(err , result) =>
                 {
@@ -191,6 +193,15 @@ validationPhoto  , validateUserSignUpData , async (req : Request , res : Respons
             {
                 user.activeKey = activeKey;
                 await user.save();
+                await new UserCreatedPublisher(natsWrapper.client).publish({
+                    id : user.id,
+                    email : user.email,
+                    username : user.username,
+                    profilePicture : user.profilePicture,
+                    coverPicture : user.coverPicture,
+                    version : user.version
+                });
+
                 res.status(201).send({ status : 201 , user , success : true})
             }
         });

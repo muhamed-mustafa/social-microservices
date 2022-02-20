@@ -17,6 +17,9 @@ export class ProductCreatedListener extends Listener<ProductCreatedEvent>
 
         await product.save();
 
+        console.log(`hi`);
+
         msg.ack()
+        
     };
 };

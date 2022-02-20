@@ -16,6 +16,7 @@ build :
         manual :
           - src  : 'src/**/*.ts'
             dest : .
+
     - image : muhammedmustafa/post
       context : post
       docker :
@@ -24,6 +25,7 @@ build :
         manual :
           - src  : 'src/**/*.ts'
             dest : .
+
     - image : muhammedmustafa/market
       context : market
       docker :
@@ -32,6 +34,7 @@ build :
         manual :
           - src  : 'src/**/*.ts'
             dest : .
+
     - image : muhammedmustafa/order
       context : order
       docker :
@@ -40,6 +43,7 @@ build :
         manual :
           - src  : 'src/**/*.ts'
             dest : .
+
     - image : muhammedmustafa/payment
       context : payment
       docker :
@@ -48,8 +52,27 @@ build :
         manual :
           - src  : 'src/**/*.ts'
             dest : .
+
     - image : muhammedmustafa/expiration
       context : expiration
+      docker :
+        dockerfile : Dockerfile
+      sync :
+        manual :
+          - src  : 'src/**/*.ts'
+            dest : .
+
+    - image : muhammedmustafa/comment
+      context : comment
+      docker :
+        dockerfile : Dockerfile
+      sync :
+        manual :
+          - src  : 'src/**/*.ts'
+            dest : .
+
+    - image : muhammedmustafa/reply
+      context : reply
       docker :
         dockerfile : Dockerfile
       sync :

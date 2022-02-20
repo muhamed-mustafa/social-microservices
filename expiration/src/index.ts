@@ -1,6 +1,6 @@
 import { natsWrapper } from './nats-wrapper';
 import { OrderCreatedListener } from '../events/listeners/order-created-listener';
-import { BanCreatedListener } from '../events/listeners/ban-created-listener';
+import { AdminCreatedBanListener } from '../events/listeners/admin-created-ban-listener';
 
 const start = async () =>
 {
@@ -26,7 +26,7 @@ const start = async () =>
         process.on('SIGTERM' , () => natsWrapper.client.close());   
 
         new OrderCreatedListener(natsWrapper.client).listen();
-        new BanCreatedListener(natsWrapper.client).listen();
+        new AdminCreatedBanListener(natsWrapper.client).listen();
    }
 
    catch(e)

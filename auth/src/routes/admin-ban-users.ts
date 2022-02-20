@@ -3,7 +3,7 @@ import { User } from '../models/user.model';
 import { requireAuth , BadRequestError , upload } from '@social-microservices/common';
 import moment from 'moment';
 import mongoose from 'mongoose';
-import { BanCreatedPublisher } from '../events/publishers/ban-created-publisher';
+import { AdminCreatedBanPublisher } from '../events/publishers/admin-created-ban-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
 interface BanUser
@@ -20,7 +20,7 @@ router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : R
 {
       const user = await User.findById(req.currentUser!.id);
 
-      if(!user?.isAdmin)
+      if(user?.roles !== 'admin')
       {
             throw new BadRequestError('User have no this permission');
       }
@@ -37,7 +37,7 @@ router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : R
             throw new BadRequestError('User is not exists.');
       }
 
-      if(existingUser.isAdmin)
+      if(existingUser.roles === 'admin')
       {
             throw new BadRequestError('u can not delete this user because user is also admin.');
       }
@@ -57,14 +57,31 @@ router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : R
 
       existingUser.hasAccess = false;
 
-      const ban =
+      if(existingUser.ban.length === 0)
       {
-          period : req.body.period ? req.body.period : undefined,
-          reason : req.body.reason,
-          end_in : req.body.period ? moment().add(num , <moment.unitOfTime.DurationConstructor>str).format() : undefined,
-      } as BanUser;
+            const ban =
+            {
+                  period : req.body.period ? req.body.period : undefined,
+                  reason : req.body.reason,
+                  end_in : req.body.period ? moment().add(num , <moment.unitOfTime.DurationConstructor>str).format() : undefined, 
+            } as BanUser;
 
-      existingUser.ban.push(ban);
+            existingUser.ban.push(ban);
+      }
+
+      else
+      {     
+            const { end_in } = existingUser.ban[existingUser.ban.length - 1];
+
+            const ban =
+            {
+                  period : req.body.period ? req.body.period : undefined,
+                  reason : req.body.reason,
+                  end_in : req.body.period ? moment(end_in).add(num , <moment.unitOfTime.DurationConstructor>str).format() : undefined, 
+            } as BanUser;
+
+            existingUser.ban.push(ban);
+      }
 
       await existingUser.save();
 
@@ -72,7 +89,7 @@ router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : R
 
       if(end_in)
       {
-            await new BanCreatedPublisher(natsWrapper.client).publish({
+            await new AdminCreatedBanPublisher(natsWrapper.client).publish({
                   id : existingUser.id,
                   ban :
                   {
@@ -80,8 +97,8 @@ router.patch('/api/auth/admin/ban' , upload.none() , requireAuth , async(req : R
                   }
             });
       }
-
-      res.status(200).send({ status : 200 , existingUser , success : true});
+      
+      res.status(200).send({ status : 200 , existingUser , success : true });
 });
 
 export { router as adminBanUsers }; 
