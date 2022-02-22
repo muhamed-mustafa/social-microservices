@@ -10,7 +10,7 @@
   "author": "Muhammed Mustafa",
   "license": "ISC",
   "dependencies": {
-    "@social-microservices/common": "^1.0.36",
+    "@social-microservices/common": "^1.0.37",
     "@types/cookie-session": "^2.0.44",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.8",

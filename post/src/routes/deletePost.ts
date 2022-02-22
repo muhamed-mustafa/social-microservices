@@ -1,8 +1,10 @@
 import { BadRequestError, requireAuth , upload } from '@social-microservices/common';
 import express , { Request , Response } from 'express';
 import { Post } from '../models/post.model';
-
+import { PostDeletedPublisher } from '../events/publishers/post-deleted-publisher';
+import { natsWrapper } from '../nats-wrapper';
 const router = express.Router();
+
 
 router.delete('/api/post' , upload.none() , requireAuth , async(req : Request , res : Response) =>
 {
@@ -18,6 +20,10 @@ router.delete('/api/post' , upload.none() , requireAuth , async(req : Request , 
       }
 
       await post.deleteOne();
+      await new PostDeletedPublisher(natsWrapper.client).publish({
+            id : post.id
+      });
+      
       res.send({status : 204 , message : "Post has been deleted Successfully!" , success : true});
 });
 

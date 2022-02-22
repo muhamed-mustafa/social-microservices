@@ -18,6 +18,7 @@ export * from './types/order-status';
 export * from './types/cover-picture';
 export * from './types/roles-type';
 export * from './types/profile-picture';
+export * from './types/model-type';
 
 // Events
 export * from './events/base-publisher';
@@ -36,4 +37,6 @@ export * from './events/user-updated-event';
 export * from './events/user-deleted-event';
 export * from './events/follow-created-event';
 export * from './events/unfollow-created-event';
-
+export * from './events/post-created-event';
+export * from './events/post-updated-event';
+export * from './events/post-deleted-event';

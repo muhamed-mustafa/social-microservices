@@ -10,7 +10,7 @@
   "author": "Muhammed Mustafa",
   "license": "ISC",
   "dependencies": {
-    "@social-microservices/common": "^1.0.36",
+    "@social-microservices/common": "^1.0.37",
     "@types/bull": "^3.15.7",
     "bull": "^4.5.1",
     "node-nats-streaming": "^0.3.2",

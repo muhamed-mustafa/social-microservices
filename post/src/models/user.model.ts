@@ -17,7 +17,7 @@ interface UserDoc extends mongoose.Document
     profilePicture : string;
     coverPicture : string;  
     followers : [],
-    following : [],
+    followings : [],
     version : number
     created_at : string;
     updated_at : string; 

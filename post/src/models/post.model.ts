@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { ModelType } from '@social-microservices/common';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 interface PostAttrs 
 {
@@ -15,8 +17,10 @@ interface PostDoc extends mongoose.Document
     content   : string;
     likes  : string[];
     type   : string;
+    version : number;
     createdAt : string;
     updatedAt : string;
+    comments  : string[];
 };
 
 interface PostModel extends mongoose.Model<PostDoc>
@@ -53,8 +57,14 @@ const postSchema = new mongoose.Schema({
   type : 
   {
       type : String,
-      default : "Post",
+      default : ModelType.Post,
   },
+
+  comments :
+  {
+      type : Array,
+      default : []
+  }
  
 } , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } , versionKey : false });
 
@@ -62,6 +72,9 @@ postSchema.statics.build = (attrs : PostAttrs) =>
 {
     return new Post(attrs);
 }
+
+postSchema.set('versionKey' , 'version');
+postSchema.plugin(updateIfCurrentPlugin);
 
 const Post = mongoose.model<PostDoc , PostModel>('Post' , postSchema);
 

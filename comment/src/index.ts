@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import { v2 as Cloudinary } from 'cloudinary';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
+import { PostCreatedListener } from './events/listeners/post-created-listener';
+import { PostUpdatedListener } from './events/listeners/post-updated.listener';
+import { PostDeletedListener } from './events/listeners/post-deleted-listener';
 
 const start = async () =>
 {
@@ -25,6 +28,10 @@ const start = async () =>
 
         process.on('SIGINT' , () => natsWrapper.client.close());
         process.on('SIGTERM' , () => natsWrapper.client.close());
+
+        new PostCreatedListener(natsWrapper.client).listen();
+        new PostUpdatedListener(natsWrapper.client).listen();
+        new PostDeletedListener(natsWrapper.client).listen();
         
         await mongoose.connect(process.env.MONGO_URI! , { useNewUrlParser : true , useUnifiedTopology : true } as mongoose.ConnectOptions);
         mongoose.Promise = global.Promise;

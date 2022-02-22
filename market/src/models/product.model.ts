@@ -1,3 +1,4 @@
+import { ModelType } from '@social-microservices/common';
 import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
@@ -22,6 +23,7 @@ interface ProductDoc extends mongoose.Document
     createdAt : string;
     updatedAt : string;
     orderId?  : string;
+    comments  : string[]; 
 };
 
 interface ProductModel extends mongoose.Model<ProductDoc>
@@ -65,12 +67,18 @@ const productSchema = new mongoose.Schema({
   type : 
   {
       type : String,
-      default : "Product",
+      default : ModelType.Product,
   },
 
   orderId :
   {
       type : String,
+  },
+
+  comments :
+  {
+      type : Array,
+      default : []
   }
  
 } , { toJSON : { transform(doc , ret) {ret.id = ret._id , delete ret._id , delete ret.password } } , timestamps : { createdAt: 'created_at', updatedAt: 'updated_at' } , versionKey : false });

@@ -3,6 +3,8 @@ import { validationPhoto , upload, BadRequestError, requireAuth } from '@social-
 import { Post } from '../models/post.model';
 import { v2 as Cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
+import { PostCreatedPublisher } from '../events/publishers/post-created-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -55,6 +57,13 @@ router.post('/api/post' , upload.fields([{name : "images"}]) , validationPhoto ,
       }
       
       await newPost.save();
+
+      await new PostCreatedPublisher(natsWrapper.client).publish({
+            id : newPost.id,
+            author : newPost.author,
+            version : newPost.version
+      });
+
       res.status(201).json({status : 201 , newPost , message : "Post created Successfully!" , success : true});
 });
 

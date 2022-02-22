@@ -4,6 +4,8 @@ import { Post } from '../models/post.model';
 import { v2 as Cloudinary } from 'cloudinary';
 import _ from 'lodash';
 import { randomBytes } from 'crypto';
+import { PostUpdatedPublisher } from '../events/publishers/post-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -62,6 +64,12 @@ router.patch('/api/post' , upload.fields([{name : "images"}]) , validationPhoto 
 
       _.extend(post , req.body);
       await post.save();
+
+      await new PostUpdatedPublisher(natsWrapper.client).publish({
+            id : post.id,
+            version : post.id
+      });
+
       res.status(200).json({status : 200 , post , message : "Post Updated Successfully!" , success : true});
 });
 

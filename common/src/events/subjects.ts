@@ -12,5 +12,8 @@ export enum Subjects
     UserUpdated  = 'user:updated',
     UserDeleted  = 'user:deleted',
     UserFollow   = 'user:follow',
-    UserUnFollow = 'user:unfollow'
+    UserUnFollow = 'user:unfollow',
+    PostCreated  = 'post:created',
+    PostUpdated  = 'post:updated',
+    PostDeleted  = 'post:deleted',
 };
