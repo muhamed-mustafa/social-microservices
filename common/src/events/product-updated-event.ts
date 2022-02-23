@@ -6,10 +6,12 @@ export interface ProductUpdatedEvent
     data :
     {
         id : string;
-        merchantId : string;
+        merchantId? : string;
         images? : { id : string , URL : string; }[];
         content?   : string;
         price?  : number;
+        commentId? : string;
+        commentArrayLength? : number;
         version : number;
         orderId? : string;
     };

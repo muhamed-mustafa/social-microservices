@@ -4,6 +4,8 @@ import { OAuth2Client } from "google-auth-library";
 import nodemailer , { TransportOptions } from "nodemailer";
 import { BadRequestError , upload } from "@social-microservices/common";
 import { randomBytes } from "crypto";
+import { UserUpdatedPublisher } from "../events/publishers/user-updated-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -87,7 +89,16 @@ router.patch("/api/auth/forget", upload.none(), async (req: Request, res: Respon
                 user.resetPasswordToken = resetPasswordToken;
                 const time = Date.now() + 3600000; // 1 hour
                 user.resetPasswordExpires = new Date(time).toISOString();
-                await user.save();
+                const savedData = await user.save();
+
+                if(savedData)
+                {
+                    await new UserUpdatedPublisher(natsWrapper.client).publish({
+                        id : savedData.id,
+                        version : savedData.version
+                    });
+                }
+
                 res.status(200).send({ status: 200, user, message: "Email Sent Successfully", success: true });
         }
     });

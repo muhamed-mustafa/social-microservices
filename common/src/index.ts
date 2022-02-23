@@ -25,6 +25,7 @@ export * from './events/base-publisher';
 export * from './events/base-listener';
 export * from './events/product-created-event';
 export * from './events/product-updated-event';
+export * from './events/product-deleted-event';
 export * from './events/order-created-event';
 export * from './events/order-cancelled-event';
 export * from './events/payment-created-event';
@@ -40,3 +41,9 @@ export * from './events/unfollow-created-event';
 export * from './events/post-created-event';
 export * from './events/post-updated-event';
 export * from './events/post-deleted-event';
+export * from './events/comment-created-event';
+export * from './events/comment-updated-event';
+export * from './events/comment-deleted-event';
+export * from './events/reply-created-event';
+export * from './events/reply-deleted-event';
+

@@ -4,6 +4,8 @@ import { Comment } from '../models/comment.model';
 import { v2 as Cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
 import _ from 'lodash';
+import { CommentUpdatedPublisher } from '../events/publishers/comment-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -61,7 +63,14 @@ router.patch('/api/comment' , upload.fields([{ 'name' : 'media' }]) , requireAut
 
       _.extend(comment , req.body);
 
-      await comment.save();
+      const commentData = await comment.save();
+      if(commentData)
+      {
+        await new CommentUpdatedPublisher(natsWrapper.client).publish({
+            id : commentData.id,
+            version : commentData.version
+        });
+      }
 
       res.status(200).send({ status : 200, comment , success : true });
 });

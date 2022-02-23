@@ -2,6 +2,7 @@ export enum Subjects
 { 
     ProductCreated = 'product:created',
     ProductUpdated = 'product:updated',
+    ProductDeleted = 'product:deleted',
     OrderCreated   = 'order:created',
     OrderCancelled = 'order:cancelled',
     PaymentCreated = 'payment:created',
@@ -16,4 +17,9 @@ export enum Subjects
     PostCreated  = 'post:created',
     PostUpdated  = 'post:updated',
     PostDeleted  = 'post:deleted',
+    CommentCreated = 'comment:created',
+    CommentUpdated = 'comment:updated',
+    CommentDeleted = 'comment:deleted',
+    ReplyCreated   = 'reply:created',
+    ReplyDeleted   = 'reply:Deleted',
 };

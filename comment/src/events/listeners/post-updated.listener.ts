@@ -21,7 +21,7 @@ export class PostUpdatedListener extends Listener<PostUpdatedEvent>
         {
             if(post.comments.length > Number(data.commentArrayLength))
             {
-                post.comments = post.comments.filter(comment => comment !== data.commentId)
+                post.comments = post.comments.filter(comment => comment !== String(data.commentId))
             }
 
             else

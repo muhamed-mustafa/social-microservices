@@ -5,6 +5,8 @@ import { Product } from '../models/product.model';
 import { Comment } from '../models/comment.model';
 import { v2 as Cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
+import { CommentCreatedPublisher } from '../events/publishers/comment-created-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -67,7 +69,17 @@ router.post('/api/comment' , upload.fields([{ 'name' : 'media'}]) , requireAuth 
           })
       }
 
-      await comment.save();
+      const commentData = await comment.save();
+      if(commentData)
+      {
+        await new CommentCreatedPublisher(natsWrapper.client).publish({
+            id : commentData.id,
+            userId : commentData.userId,
+            version : commentData.version,
+            postId  : commentData.post,
+            productId : commentData.product
+        });
+      }
 
       res.status(201).send({ status : 201 , comment , success : true });
 });

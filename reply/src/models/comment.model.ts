@@ -7,6 +7,7 @@ interface CommentAttrs
     userId : string;
     post? : string;
     product? : string;
+    version : number;
 };
 
 interface CommentDoc extends mongoose.Document

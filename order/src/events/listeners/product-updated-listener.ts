@@ -17,8 +17,12 @@ export class ProductUpdatedListener extends Listener<ProductUpdatedEvent>
             throw new Error('product not found!');
         };
 
-        const { content , price , images } = data;
-        product.set({ content , price , images });
+        const fields : { [key : string] : any} = {};
+        
+        delete fields['version'];
+
+        product.set({ ...fields });
+
         await product.save();
 
         msg.ack();

@@ -1,6 +1,6 @@
 import { Message } from "node-nats-streaming";
 import { Subjects , OrderCancelledEvent , Listener } from "@social-microservices/common";
-import { QueueGroupName } from "./queue-qroup-name";
+import { QueueGroupName } from "./queue-group-name";
 import { Product } from "../../models/product.model";
 import { ProductUpdatedPublisher } from "../publishers/product-updated-publisher";
 

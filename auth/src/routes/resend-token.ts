@@ -4,6 +4,8 @@ import { OAuth2Client } from "google-auth-library";
 import nodemailer , { TransportOptions } from "nodemailer";
 import { BadRequestError } from "@social-microservices/common";
 import { randomBytes } from "crypto";
+import { UserUpdatedPublisher } from "../events/publishers/user-updated-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -115,7 +117,14 @@ router.patch("/api/auth/resend", async (req: Request, res: Response) =>
               user.activeKey = resendKey;
           }
 
-          await user.save();
+          const savedData = await user.save();
+          if(savedData)
+          {
+            await new UserUpdatedPublisher(natsWrapper.client).publish({
+                id : savedData.id,
+                version : savedData.version
+            });
+          }
           res.status(200) .send({ status: 200, user, message: "Email Sent", success: true });
         }
     });
