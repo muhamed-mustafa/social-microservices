@@ -115,11 +115,12 @@ kubectl create secret generic cloudinary-secret --from-literal=CLOUDINARY_SECRET
 kubectl create secret generic stripe-secret --from-literal=STRIPE_KEY=<value>
 kubectl create secret generic mail-api-secret-pass-social --from-literal=MAIL_PASS=<value>
 kubectl create secret generic client-api-secret-social --from-literal=CLIENT_SECRET=<value>
+kubectl create secret generic google-refresh-token-social --from-literal=REFRESH_TOKEN=<value>
 ```
 
 ### 3. Set your own account values
 
-The non-secret account settings (`CLOUDINARY_NAME`, `CLOUDINARY_API_KEY`, `MAIL_USER`, `CLIENT_ID`, `REFRESH_TOKEN`, `REDIRECT_URI`) are plain `env` values in the deployment manifests under `infra/k8s/`. Replace them with your own before deploying.
+The non-secret account settings (`CLOUDINARY_NAME`, `CLOUDINARY_API_KEY`, `MAIL_USER`, `CLIENT_ID`, `REDIRECT_URI`) are plain `env` values in the deployment manifests under `infra/k8s/`. Replace them with your own before deploying.
 
 ### 4. Run
 
@@ -138,9 +139,10 @@ Skaffold builds one image per service, applies the manifests in `infra/k8s/` and
 | `STRIPE_KEY` | payment | secret `stripe-secret` | Stripe secret key |
 | `MAIL_PASS` | auth | secret `mail-api-secret-pass-social` | Password of the sending mailbox |
 | `CLIENT_SECRET` | auth | secret `client-api-secret-social` | Google OAuth client secret |
+| `REFRESH_TOKEN` | auth | secret `google-refresh-token-social` | Google OAuth2 refresh token for Gmail |
 | `CLOUDINARY_NAME`, `CLOUDINARY_API_KEY` | auth, post, comment, reply, market | manifest | Cloudinary account |
 | `MAIL_USER`, `MAIL_SERVER_PORT` | auth | manifest | Sending mailbox and SMTP port |
-| `CLIENT_ID`, `REFRESH_TOKEN`, `REDIRECT_URI` | auth | manifest | Google OAuth2 settings for Gmail |
+| `CLIENT_ID`, `REDIRECT_URI` | auth | manifest | Google OAuth2 settings for Gmail |
 | `MONGO_URI` | all HTTP services | manifest | Connection string of the service's own MongoDB |
 | `NATS_URL`, `NATS_CLUSTER_ID`, `NATS_CLIENT_ID` | all services | manifest (client id is the pod name) | NATS Streaming connection |
 | `REDIS_HOST` | expiration | manifest | Redis host for Bull |

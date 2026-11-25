@@ -47,7 +47,10 @@ spec :
             - name  : CLIENT_ID
               value : "1070496040691-lqta83gpoujs4ol1l4nrqnrt1op1k117.apps.googleusercontent.com"
             - name  : REFRESH_TOKEN
-              value : "1//04B8UjdKsDpwyCgYIARAAGAQSNwF-L9Iro5H0MJTASEUCaLumRAgNun6NJsqOCz0uiYbCznVBHEjhWRjHsb36LHgXD1ARbgBTYpo"
+              valueFrom :
+                secretKeyRef :
+                  name : google-refresh-token-social
+                  key  : REFRESH_TOKEN
             - name  : REDIRECT_URI
               value : "https://developers.google.com/oauthplayground"
             - name  : MAIL_PASS
